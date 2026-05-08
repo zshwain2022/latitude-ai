@@ -19,7 +19,8 @@ source.include_exts = py,png,jpg,kv,atlas,json,txt
 version = 1.0.0
 
 # (list) Application requirements
-requirements = python3,kivy,plyer,sdl2_ttf==2.20.2,pyjnius,android
+# 注意: 移除了 sdl2_ttf 版本限制，使用默认版本
+requirements = python3,kivy,pyjnius,android
 
 # (str) Presplash of the application
 #presplash.filename = %(source.dir)s/data/presplash.png
@@ -28,7 +29,7 @@ requirements = python3,kivy,plyer,sdl2_ttf==2.20.2,pyjnius,android
 #icon.filename = %(source.dir)s/data/icon.png
 
 # (bool) Indicate if the application should be fullscreen or not
-fullscreen = 0
+fullscreen = 1
 
 # (str) Android API level to use (minimum)
 android.api = 33
@@ -46,84 +47,64 @@ android.skip_update = False
 android.accept_sdk_license = True
 
 # (str) The Android arch to build for
-android.archs = arm64-v8a, armeabi-v7a
+android.archs = arm64-v8a
 
 # (bool) enables Android auto backup feature (Android API >=23)
 android.allow_backup = True
 
-# (str) XML rules for auto backup
-android.backup_rules =
-
-# (str) The name of the JNI library to use for Android
-android.jni_ignored_src =
-
 # (list) Android permission list
-android.permissions = INTERNET,ACCESS_NETWORK_STATE
+# 添加了 Internet 权限
+android.permissions = INTERNET,ACCESS_NETWORK_STATE,ACCESS_WIFI_STATE
 
 # (int) Target Android API version
 android.target_api = 33
 
-# (list) White list of Java classes that can be used in Python via pyjnius
-android.add_jars =
-
-# (list) Java class to add as an activity to the manifest.
-android.add_activites =
-
-# (str) OUYA Console category. Should be one of GAME or APP
-# ouya.category = APP
-
-# (str) Filename of OUYA console icon. It must exist in source dir.
-# ouya.icon.filename = %(source.dir)s/data/ouya_icon.png
-
-# (str) XML file to include as an intent filters in <activity> tag
-android.intent_filters =
-
 # (str) launchMode to set for the main activity
-android.launch_mode = singleTop
-
-# (list) Android additional libraries to copy into libs/armeabi
-android.add_libs_armeabi =
-android.add_libs_armeabi_v7a =
-android.add_libs_arm64_v8a =
-android.add_libs_x86 =
-android.add_libs_x86_64 =
+android.launch_mode = singleTask
 
 # (bool) Indicate if the screen should stay on while on USB power
 android.wakelock = False
 
-# (bool) Enable WebView-like behavior that helps when developing apps
-android.embed_boot_into_start_activity = True
-
 # (str) Activity background color in #AARRGGBB format
-android.activity_background_color = #FFFFFF
+android.activity_background_color = #FFFFFFFF
 
-# (str) Path to a custom android.jar
-android.android_jar =
+# (str) Extra command line arguments to pass to the build process
+android.extra_manifest_xml = 
+android.extra_manifest_application_arguments = 
 
-# (str) Used for package identifier naming convention
-android.naming_convention =
+# (str) Extra arguments to pass to the gradle build
+android.gradle_options = 
 
-# (bool) Android: copy libs instead of using addLibs with services
-android.copy_libs = 1
+# (list) Java classes to add as activities to the manifest
+android.add_activities = 
 
-# (str) The architecture of your device
-android.arch = arm64-v8a
+# (list) Android AAR archives to add
+android.add_aars = 
 
-# (list) List of service declarations
-services =
+# (list) Android gradle dependencies to add
+android.gradle_dependencies = 
 
-# (bool) Use --private data storage (True) or --dir public storage (False)
-android.storage_type = files
+# (str) Android entry point
+android.entrypoint = org.kivy.android.PythonActivity
+
+# (str) Android app theme
+android.apptheme = @android:style/Theme.NoTitleBar
+
+# (list) Pattern to whitelist for the whole project
+android.whitelist = 
+
+# (bool) If True, show verbose output from the build process
+android.verbose = True
+
+# (str) The format used to package the app for release mode (aab or apk or aar)
+android.release_artifact = apk
+
+# (str) The format used to package the app for debug mode (apk or aar)
+android.debug_artifact = apk
 
 #
 # iOS specific
 #
-
-# (str) Name of the certificate to use for signing the debug version
-#ios.certificate =
-
-# (str) Name of the signing profile to use
-#ios.profiles =
 
 # (str) Path to a custom kivy-ios folder
 #ios.kivy_ios_dir = ../kivy-ios
@@ -159,9 +140,6 @@ warn_on_root = 1
 
 # (str) Build output directory
 output_dir = bin
-
-# (str) Path to build spec file
-spec = buildozer.spec
 
 # (str) The cache directory
 cache_dir = .cache
@@ -216,18 +194,3 @@ tmp_dir = /tmp/buildozer_{app.name}_{timestamp}
 
 # (str) The publish method to use (none, github, pypi, etc.)
 publish_method = none
-
-# (str) GitHub repository URL
-#publish.github_repo =
-
-# (str) GitHub token for authentication
-#publish.github_token =
-
-# (str) PyPI repository URL
-#publish.pypi_url =
-
-# (str) PyPI token for authentication
-#publish.pypi_token =
-
-# (str) Additional arguments for publishing
-#publish_extra_args =
