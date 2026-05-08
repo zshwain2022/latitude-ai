@@ -7,87 +7,57 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04  # 使用稳定版本
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          python-version: '3.11'
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            git \
-            zip \
-            unzip \
-            autoconf \
-            libtool \
-            pkg-config \
-            python3-dev \
-            openjdk-17-jdk \
-            zlib1g-dev \
-            libncurses5-dev \
-            libncursesw5-dev \
-            libssl-dev \
-            libffi-dev \
-            liblzma-dev \
-            ccache \
-            automake \
-            cmake
-
-      - name: Setup ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
-          key: buildozer-${{ runner.os }}
-          max-size: 5G
+          gradle-version: '8.5'
 
-      - name: Install Python dependencies
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Generate debug keystore
         run: |
-          pip install --upgrade pip setuptools wheel
-          pip install buildozer cython
+          keytool -genkey -v \
+            -keystore app/debug.keystore \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Debug,O=Debug,C=US"
 
-      - name: Cache Buildozer
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.buildozer
-            .cache
-          key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
-          restore-keys: |
-            ${{ runner.os }}-buildozer-
-
-      - name: Build APK
-        run: |
-          export PATH="/usr/lib/ccache:$PATH"
-          export ANDROID_HOME=/usr/local/lib/android/sdk
-          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-          buildozer android debug
-        env:
-          BUILDOZER_BUILD_ARCH: arm64-v8a
+      - name: Build Debug APK
+        run: gradle assembleDebug --stacktrace
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: latitude-ai-apk
-          path: bin/*.apk
+          path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
 
-      - name: Show build summary
+      - name: Build summary
         if: always()
         run: |
           echo "## 📱 APK 构建结果" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -f bin/*.apk ]; then
+          if ls app/build/outputs/apk/debug/*.apk 1>/dev/null 2>&1; then
             echo "✅ **构建成功！**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### 文件信息" >> $GITHUB_STEP_SUMMARY
-            ls -lh bin/*.apk | awk '{print "- " $9 ": " $5}' >> $GITHUB_STEP_SUMMARY
+            ls -lh app/build/outputs/apk/debug/*.apk | awk '{print "- " $9 ": " $5}' >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **构建失败**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
