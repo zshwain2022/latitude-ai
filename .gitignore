@@ -1,0 +1,32 @@
+# Buildozer
+.bin/
+bin/
+.cache/
+dist/
+*.apk
+*.aab
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kivy
+.kv/config.ini
+
+# Buildozer temp
+/tmp/buildozer_*

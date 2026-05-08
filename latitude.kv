@@ -1,0 +1,47 @@
+#:kivy 1.0
+
+<MainLayout>:
+    orientation: 'vertical'
+
+    # 顶部标题栏
+    BoxLayout:
+        size_hint_y: None
+        height: dp(56)
+        canvas.before:
+            Color:
+                rgba: 0.102, 0.451, 0.91, 1  # Google Blue
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Label:
+            text: 'Latitude AI'
+            bold: True
+            color: 1, 1, 1, 1
+            font_size: '20sp'
+            halign: 'center'
+            valign: 'middle'
+            text_size: self.size
+
+    # WebView 主内容区
+    WebView:
+        id: webview
+        url: 'https://www.dglatitude.cc'
+        allow_zoom: True
+        enable_default_session: True
+        enable_javascript: True
+        enable_downloads: False
+        enable_app_cache: True
+        enable_dom_storage: True
+        enable_geolocation: False
+
+    # 底部状态栏（可选）
+    BoxLayout:
+        size_hint_y: None
+        height: dp(4)
+        canvas.before:
+            Color:
+                rgba: 0.102, 0.451, 0.91, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
